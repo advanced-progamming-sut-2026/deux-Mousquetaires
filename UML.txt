@@ -5,41 +5,45 @@ Entity  (abstract)
 │  # maxHp: int
 │  # isAlive: boolean
 │  # assetId: String
-│  + update(): void         {abstract}
-│  + draw(): void           {abstract}
-│  + die(): void            {abstract}
+│  + update(): void {abstract}
+│  + draw(): void {abstract}
+│  + die(): void {abstract}
 │  + takeDamage(d: int): void {abstract}
 │  + isAlive(): boolean
 │  + getPosition(): int[2]
 │  # onDeath(): void
 │
 ├── Plant  (abstract)
+│PlantFactory
+│   │+ createPlant(type: PlantType): Plant
 │   │  - sunCost: int
 │   │  - seedRechargeTime: int
 │   │  - range: float
-│   │  - level: int                // 1–5
-│   │  - plantFoodStock: int       // 0–3
+│   │  - level: int                // 1–->5
+│   │  - plantFoodStock: int       // 0-->3
 │   │  - tags: EnumSet<PlantTag>
 │   │  - family: PlantFamily
 │   │  - isBoosted: boolean
 │   │  - seedPacket: SeedPacket
-│   │  + attack(): void            {abstract}
-│   │  + produce(): void           {abstract}
-│   │  + onPlantFood(): void       {abstract}
+│   │  + attack(): void {abstract}
+│   │  + produce(): void {abstract}
+│   │  + onPlantFood(): void {abstract}
 │   │  + upgrade(): void
 │   │  + takeDamage(d: int): void
 │   │  + boost(duration: int): void
 │   │  + hasTag(t: PlantTag): boolean
 │   │  + getSunCost(): int
 │   │  + getLevel(): int
-│   └── [see Plants section]
+│   └── [Plants section]
 │
 └── Zombie  (abstract)
-    │  - speed: float               // cells/tick
+│ZombieFactory
+    │  + createZombie(type: ZombieType): Zombie
+    │  - speed: float
     │  - damage: int
     │  - armor: int
     │  - waveCost: int
-    │  - lane: int                  // 0–4
+    │  - lane: int                  // 0–->4
     │  - isHypnotized: boolean
     │  - isSlowed: boolean
     │  - slowMultiplier: float
@@ -47,7 +51,7 @@ Entity  (abstract)
     │  - isPoisoned: boolean
     │  - poisonDmgPerTick: int
     │  - currentTarget: Plant
-    │  + specialAbility(): void     {abstract}
+    │  + specialAbility(): void {abstract}
     │  + move(): void
     │  + attack(p: Plant): void
     │  + takeDamage(d: int): void
@@ -59,11 +63,12 @@ Entity  (abstract)
     │  + hypnotize(): void
     │  + getWaveCost(): int
     │  + getEffectiveSpeed(): float
-    └── [see Zombies section]
+    └── [Zombies section]
 
 ### Plants
 Plant (abstract)
-├── Sunflower          [SUN_PRODUCER · DAY · SUNFLOWER_FAMILY]
+├── Sunflower          
+[SUN_PRODUCER · DAY · SUNFLOWER_FAMILY]
 │     sunCost=50 · hp=300 · recharge=7s
 │     - sunInterval: int = 24 ticks
 │     - sunAmount: int = 25
@@ -268,12 +273,26 @@ Zombie (abstract)
       - hypnotizeOnDeath(): void
 
 Board
-│  - rows: int = 5            - cols: int = 9
+│  - rows: int = 5            
+│  - cols: int = 9
 │  - cells: Cell[][]
 │  - activePlants: List<Plant>
 │  - activeZombies: List<Zombie>
 │  - projectiles: List<Projectile>
 │  - suns: List<Sun>
+├──LawnMower
+│  - row: int
+│  - isActivated: boolean
+│  - hasUsed: boolean
+│  - position: int
+│  - speed: float
+│  - damage: int
+│  + activate(): void
+│  + move(): void
+│  + checkZombieCollision(z: Zombie): void
+│  + destroyZombies(): void
+│  + isAvailable(): boolean
+│──
 │  - lawnMowers: LawnMower[5]
 │  - waveManager: WaveManager
 │  - sunAmount: int
@@ -283,16 +302,20 @@ Board
 │  + boostPlant(type: String): void
 │  + spawnZombie(z: Zombie, lane: int): void
 │  + collectSun(x, y: int): void
-│  + isWon(): boolean         + isLost(): boolean
+│  + isWon(): boolean         
+│  + isLost(): boolean
 │  + releaseNuke(): void
 │
 └─◆ Cell
       - row, col: int
       - terrain: TerrainType
       - plant: Plant
-      - isFrozen: boolean      - frozenHp: int = 600
-      - hasTomb: boolean       - tombHp: int  = 700
-      - hasIce: boolean        - iceHp: int   = 600
+      - isFrozen: boolean      
+      - frozenHp: int = 600
+      - hasTomb: boolean       
+      - tombHp: int = 700
+      - hasIce: boolean        
+      - iceHp: int = 600
       + isEmpty(): boolean
       + setPlant(p: Plant): void
       + canPlantHere(p: Plant): boolean
@@ -335,6 +358,7 @@ User
 │  + addGems(n: int): void     + spendGems(n: int): boolean
 │  + save(): void
 │
+
 ├─◆ AuthService
 │     - hashAlgorithm: String = "SHA-256"
 │     + register(username, pw, pwConfirm, nickname,email, gender): User
@@ -361,14 +385,36 @@ User
 │     + isUnlocked(name): boolean
 │     + getLevel(name): int
 │
+GreenHouse
+│  - availablePlants: List<Plant>
+│  - lastHarvestTime: DateTime
+│  - harvestInterval: int
+│  - producedSun: int
+│  + unlockPlant(name: String): void
+│  + harvest(): int
+│  + canHarvest(): boolean
 └─◆ GameProgress
-      - currentWorld: int       - currentChapter: int
-      - clearedLevels: Set<String>
-      - miniGamesUnlocked: Map<String, boolean>
-      - shopUnlocked: boolean
-      + completeLevel(id: String): void
-      + isLevelUnlocked(id): boolean
-      + unlockMiniGame(name): void
+│      - currentWorld: int 
+│───World
+│  - name: String
+│  - mapPath: String
+│  - specialFeatures: List<String>      
+│      - currentChapter: int
+│      - clearedLevels: Set<String>
+│      - miniGamesUnlocked: Map<String, boolean>
+│      - shopUnlocked: boolean
+│      + completeLevel(id: String): void
+│      + isLevelUnlocked(id): boolean
+│      + unlockMiniGame(name): void
+│
+MiniGame (abstract)
+│  - specialRules: List<String>
+│  - gameType: MiniGameType
+│  - reward: int
+│  + start(): void
+│  + update(): void
+│  + finish(): void
+────
 ### Menu System
 MenuSystem
 │  - currentContext: MenuContext
@@ -395,21 +441,45 @@ MenuSystem
 │  + handleChangeEmail(e): void
 │  + handleChangePassword(new_, old): void
 │  + handleShowInfo(): void
-
+News
+│  - title: String
+│  - content: String
+│  - publishDate: DateTime
+│  - isRead: boolean
+│  + markAsRead(): void
+│  + show(): void
+NewsManager
+│  - newsList: List<News>
+│  + addNews(n: News): void
+│  + getUnread(): List<News>
+│  + showAll(): void
 ### Shop & Economy
 Shop
-│  - catalog: List<ShopItem>          // permanent items
-│  - dailyOffer: ShopItem             // refreshes at 00:00
+│  - catalog: List<ShopItem>
+│  - dailyOffer: ShopItem
 │  - dailyPurchased: boolean
 │  + enter(): void                    // enter shop
 │  + listPermanent(): void            // shop list
 │  + listDaily(): void                // shop daily
 │  + buy(itemId, count, plantType): boolean
 │  + refreshDailyIfNeeded(): void
-│  + convertGems(n: int, u: User): void  // 5g = 500c
+│  + convertGems(n: int, u: User): void
 │
 ShopItem (abstract)
 │  - priceCoin: int    - priceGem: int
 │  - currencyType: CurrencyType
 │  + apply(u: User): void   {abstract}
-│  + canAfford(u: User): boolean
+│  + canAfford(u: User): Boolean
+└───────────────────
+Quest
+│  - id: String
+│  - title: String
+│  - description: String
+│  - progress: int
+│  - target: int
+│  - rewardCoin: int
+│  - rewardGem: int
+│  - completed: boolean
+│  + updateProgress(amount: int): void
+│  + claimReward(u: User): void
+│  + isCompleted(): boolean

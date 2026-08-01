@@ -17,6 +17,7 @@ public class AuthService {
     private static final int MIN_PASSWORD_LEN = 8;
     private final Map<String, User> userStore = new LinkedHashMap<>();
 
+
     public User register(String username, String password, String passwordConfirm,
                          String nickname, String email, Gender gender) {
         ValidationResult usernameCheck = validateUsername(username);

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="pvz2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/phase1(terminal)/pvz_json_edition(1)/out/production/pvz_json_edition(1)/pvz/controller.zip!/" />
+      <root url="jar://$PROJECT_DIR$/phase1(terminal)/pvz_json_edition(1)/out/production/pvz_json_edition(1)/pvz/view.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
